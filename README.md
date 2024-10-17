@@ -1,5 +1,3 @@
-# atari-breakout
-
 # Atari Breakout
 
 Welcome to **Atari Breakout**, a modern recreation of the classic game, built from scratch using **Pygame**. This version offers multiple themes, exciting gameplay, and a touch of nostalgia!
