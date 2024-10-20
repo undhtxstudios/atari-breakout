@@ -1,4 +1,5 @@
 import pygame
+from objects.constants import SCREEN_WIDTH, PADDLE_COLOR
 
 
 class Paddle:
@@ -8,17 +9,22 @@ class Paddle:
         self.height = height
         self.top = top
         self.left = left
-        self.speed = 5
+        self.right = self.left + self.width
+        self.speed = 3
 
     def draw(self, screen):
         pygame.draw.rect(
             screen,
-            (255, 0, 0),
+            PADDLE_COLOR,
             pygame.Rect(self.left, self.top, self.width, self.height),
             2,
             3,
         )
 
     def move_left(self):
-        if self.left > 0 and self.left < 640:
+        if self.left > 0:
             self.left = self.left - self.speed
+
+    def move_right(self):
+        if self.left < SCREEN_WIDTH - self.width:
+            self.left = self.left + self.speed
