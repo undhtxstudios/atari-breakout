@@ -1,8 +1,9 @@
 import pygame
+import sys
 from objects.ball import Ball
 from objects.brick import Brick
 from objects.paddle import Paddle
-from objects.constants import PADDLE_STARTING_POS
+from objects.constants import PADDLE_STARTING_POS, SCREEN_WIDTH, SCREEN_HEIGTH
 
 
 class Game:
@@ -10,7 +11,8 @@ class Game:
     def __init__(self) -> None:
         pygame.init()
         pygame.display.set_caption("Atari Breakout")
-        self.screen = pygame.display.set_mode((640, 480))
+        pygame.key.set_repeat(1, 10)
+        self.screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGTH))
         self.running = True
         self.clock = pygame.time.Clock()
         self.ball = Ball(self, 100, 100, 10)
@@ -23,22 +25,25 @@ class Game:
             PADDLE_STARTING_POS[3],
         )
 
-    def handle_events(self):
-        for event in pygame.event.get():
-            if event == pygame.QUIT:
-                self.running = False
-                pygame.quit()
-
     # Main function for running the game
     def run(self):
         while self.running:
             self.screen.fill((0, 0, 0))
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    pygame.quit()
+                    sys.exit()
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_LEFT:
+                        self.paddle.move_left()
+                        # self.paddle.draw()
+                        # self.screen.fill((0,0,0))
+                    if event.key == pygame.K_RIGHT:
+                        self.paddle.move_right()
             self.ball.draw(self.screen)
             self.brick.draw(self.screen)
             self.paddle.draw(self.screen)
             pygame.display.update()
-            self.handle_events()
-        return
 
 
 Game().run()
