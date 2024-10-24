@@ -1,7 +1,7 @@
 import pygame
 import sys
 from objects.ball import Ball
-from objects.brick import Brick
+from objects.brick import Bricks
 from objects.paddle import Paddle
 from objects.constants import PADDLE_STARTING_POS, SCREEN_WIDTH, SCREEN_HEIGTH
 
@@ -16,7 +16,11 @@ class Game:
         self.running = True
         self.clock = pygame.time.Clock()
         self.ball = Ball(self, 100, 100, 10)
-        self.brick = Brick(self, 10, 10, 10, 10, False)
+        # self.brick = Brick(self, 0, 0, 160, 50, False)
+        # self.brick = Brick(self, 0, 160, 160, 50, False)
+        # self.brick = Brick(self, 0, 320, 160, 50, False)
+        # self.brick = Brick(self, 0, 480, 160, 50, False)
+        self.bricks = Bricks()
         self.paddle = Paddle(
             self,
             PADDLE_STARTING_POS[0],
@@ -41,7 +45,7 @@ class Game:
                     if event.key == pygame.K_RIGHT:
                         self.paddle.move_right()
             self.ball.draw(self.screen)
-            self.brick.draw(self.screen)
+            self.bricks.draw(self.screen)
             self.paddle.draw(self.screen)
             pygame.display.update()
 
