@@ -1,53 +1,69 @@
 import pygame
 import sys
-from objects.ball import Ball
-from objects.brick import Bricks
-from objects.paddle import Paddle
-from objects.constants import PADDLE_STARTING_POS, SCREEN_WIDTH, SCREEN_HEIGTH
+from object.ball import Balls
+from object.brick import Bricks
+from object.paddle import Paddles
+from common.constants import BACKGROUND, BALLS, BRICKS, PADDLES, themes, resolutions
 
+class Breakout:
+    def __init__(self, resolution, fps, theme) -> None:
+        self.resolution = resolution
+        self.fps = fps
+        self.theme = theme
 
-class Game:
-    # Initializing game objects
-    def __init__(self) -> None:
         pygame.init()
         pygame.display.set_caption("Atari Breakout")
-        pygame.key.set_repeat(1, 10)
-        self.screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGTH))
-        self.running = True
+        self.screen = pygame.display.set_mode(resolution)
         self.clock = pygame.time.Clock()
-        self.ball = Ball(self, 100, 100, 10)
-        # self.brick = Brick(self, 0, 0, 160, 50, False)
-        # self.brick = Brick(self, 0, 160, 160, 50, False)
-        # self.brick = Brick(self, 0, 320, 160, 50, False)
-        # self.brick = Brick(self, 0, 480, 160, 50, False)
-        self.bricks = Bricks()
-        self.paddle = Paddle(
-            self,
-            PADDLE_STARTING_POS[0],
-            PADDLE_STARTING_POS[1],
-            PADDLE_STARTING_POS[2],
-            PADDLE_STARTING_POS[3],
-        )
+        pygame.key.set_repeat(1, 10)
+    
+        self.running = True
 
-    # Main function for running the game
+        self.assets = {}
+        self.load_assets()
+
+    def load_assets(self):
+        self.assets[BALLS] = Balls()
+        self.assets[BALLS].load(self.theme, self.resolution)
+
+        self.assets[PADDLES] = Paddles(self.resolution[0])
+        self.assets[PADDLES].load(self.theme, self.resolution)
+
+        self.assets[BRICKS] = Bricks()
+        self.assets[BRICKS].load(self.theme, self.resolution)
+
+    def reload_assets(self, theme, resolution):
+        if theme not in themes or resolution not in resolutions:
+            print('Invalid theme or resolution, continuing without changes...')
+            return
+        if theme == self.theme and resolution == self.resolution:
+            return
+        for _, asset in self.assets.items():
+            asset.reload(self.theme, self.resolution)
+
+    def draw_assets(self):
+        for _, asset in self.assets.items():
+            asset.draw(self.screen)
+
+    def handle_event(self):
+        for event in pygame.event.get():
+
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+
+            # paddle movement    
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_LEFT:
+                    self.assets[PADDLES].move_left()
+                if event.key == pygame.K_RIGHT:
+                    self.assets[PADDLES].move_right()
+
+            # custom events
+
     def run(self):
         while self.running:
-            self.screen.fill((0, 0, 0))
-            for event in pygame.event.get():
-                if event.type == pygame.QUIT:
-                    pygame.quit()
-                    sys.exit()
-                if event.type == pygame.KEYDOWN:
-                    if event.key == pygame.K_LEFT:
-                        self.paddle.move_left()
-                        # self.paddle.draw()
-                        # self.screen.fill((0,0,0))
-                    if event.key == pygame.K_RIGHT:
-                        self.paddle.move_right()
-            self.ball.draw(self.screen)
-            self.bricks.draw(self.screen)
-            self.paddle.draw(self.screen)
+            self.screen.fill(BACKGROUND)
+            self.handle_event()
+            self.draw_assets()
             pygame.display.update()
-
-
-Game().run()
